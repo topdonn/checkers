@@ -3,12 +3,12 @@
     "_id": { "$oid": "01234567890123456789abcd" },
     "name" : "Player 1",
     "wins" : 0,
-    "losses": 0,
+    "losses": 0
   },
   {
     "_id": { "$oid": "01234567890123456789abce" },
     "name" : "Player 2",
     "wins" : 1,
-    "losses": 1,
+    "losses": 1
   }
 ]

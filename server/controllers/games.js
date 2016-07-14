@@ -1,7 +1,6 @@
 /* eslint-disable new-cap */
 
 import express from 'express';
-import Player from '../models/player';
 import Game from '../models/game';
 const router = module.exports = express.Router();
 
@@ -9,16 +8,22 @@ const router = module.exports = express.Router();
 router.post('/', (req, res) => {
   Game.create(req.body, (err, game) => {
     game.populate();
-    game.save((err,game) => {
-      res.send({ game });
-    })
+    game.save((err2, game2) => {
+      res.send({ game: game2 });
+    });
   });
 });
 
 router.get('/:id', (req, res) => {
-  console.log('We are in game get', req.params.id);
   Game.findById(req.params.id, (err, game) => {
-    console.log('finding the game..', game);
     res.send({ game });
-  })
+  });
+});
+
+router.put('/:id/move', (req, res) => {
+  Game.findById(req.params.id, (err, game) => {
+    game.move(req.body, (err2, updatedGame) => {
+      res.send({ game: updatedGame });
+    });
+  });
 });

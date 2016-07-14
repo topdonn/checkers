@@ -24,7 +24,6 @@ app.listen(port, () => {
   logger.log('info', '[EXPRESS] - listening port: %d', port);
 });
 
-app.use('/things', require('./controllers/things'));
 app.use('/players', require('./controllers/players'));
 app.use('/games', require('./controllers/games'));
 
