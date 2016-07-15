@@ -23,7 +23,19 @@ router.get('/:id', (req, res) => {
 router.put('/:id/move', (req, res) => {
   Game.findById(req.params.id, (err, game) => {
     game.move(req.body, (err2, updatedGame) => {
-      res.send({ game: updatedGame });
+      updatedGame.save((err3, savedGame) => {
+        res.send({ game: savedGame });
+      });
+    });
+  });
+});
+
+router.put('/:id/jump', (req, res) => {
+  Game.findById(req.params.id, (err, game) => {
+    game.jump(req.body, (err2, updatedGame) => {
+      updatedGame.save((err3, savedGame) => {
+        res.send({ game: savedGame });
+      });
     });
   });
 });

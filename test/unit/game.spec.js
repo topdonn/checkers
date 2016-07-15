@@ -137,18 +137,102 @@ describe('Game', () => {
     });
   });
   describe('#jump', () => {
-    it.skip('should make a valid jump ', (done) => {
+    it('should make a valid jump ', (done) => {
       const g = new Game({ player1: '01234567890123456789abce', player2: '01234567890123456789abcf' });
       g.board = [{ x: 4, y: 3, player: 'P2', king: false }, { x: 3, y: 4, player: 'P1', king: false }];
       g.jump({ player: 'P2', orig: { x: 4, y: 3 }, dest: { x: 2, y: 5 } }, (err1, game) => {
         game.validate(err => {
           expect(err1).to.be.null;
-          expect(game.board.filter((space) => space.x === 2 && space.y === 2 && space.player === 'P2' && space.king === false)).to.have.length(1);
+          expect(game.board.filter((space) => space.x === 2 && space.y === 5 && space.player === 'P2' && space.king === false)).to.have.length(1);
           expect(game.board.filter((space) => space.player === 'P1')).to.have.length(0);
           expect(game.board).to.have.length(1);
           done();
         });
       });
+    });
+    it('should NOT make an invalid jump - no piece to jump', (done) => {
+      const g = new Game({ player1: '01234567890123456789abce', player2: '01234567890123456789abcf' });
+      g.board = [{ x: 4, y: 3, player: 'P2', king: false }, { x: 6, y: 6, player: 'P1', king: false }];
+      g.jump({ player: 'P2', orig: { x: 4, y: 3 }, dest: { x: 2, y: 5 } }, (err1, game) => {
+        game.validate(err => {
+          expect(err1).to.be.ok;
+          expect(game.board.filter((space) => space.x === 2 && space.y === 5 && space.player === 'P2' && space.king === false)).to.have.length(0);
+          expect(game.board.filter((space) => space.x === 4 && space.y === 3 && space.player === 'P2' && space.king === false)).to.have.length(1);
+          expect(game.board.filter((space) => space.x === 6 && space.y === 6 && space.player === 'P1' && space.king === false)).to.have.length(1);
+          expect(game.board).to.have.length(2);
+          done();
+        });
+      });
+    });
+    it('should NOT make an invalid jump - trying to jump own piece', (done) => {
+      const g = new Game({ player1: '01234567890123456789abce', player2: '01234567890123456789abcf' });
+      g.board = [{ x: 4, y: 3, player: 'P2', king: false }, { x: 3, y: 4, player: 'P2', king: false }];
+      g.jump({ player: 'P2', orig: { x: 4, y: 3 }, dest: { x: 2, y: 5 } }, (err1, game) => {
+        game.validate(err => {
+          expect(err1).to.be.ok;
+          expect(game.board.filter((space) => space.x === 2 && space.y === 5 && space.player === 'P2' && space.king === false)).to.have.length(0);
+          expect(game.board.filter((space) => space.x === 4 && space.y === 3 && space.player === 'P2' && space.king === false)).to.have.length(1);
+          expect(game.board.filter((space) => space.x === 3 && space.y === 4 && space.player === 'P2' && space.king === false)).to.have.length(1);
+          expect(game.board).to.have.length(2);
+          done();
+        });
+      });
+    });
+    it('should NOT make an invalid jump - jumping wrong direction', (done) => {
+      const g = new Game({ player1: '01234567890123456789abce', player2: '01234567890123456789abcf' });
+      g.board = [{ x: 2, y: 2, player: 'P1', king: false }, { x: 3, y: 3, player: 'P2', king: false }];
+      g.jump({ player: 'P2', orig: { x: 3, y: 3 }, dest: { x: 1, y: 1 } }, (err1, game) => {
+        game.validate(err => {
+          expect(err1).to.be.ok;
+          expect(game.board.filter((space) => space.x === 3 && space.y === 3 && space.player === 'P2' && space.king === false)).to.have.length(1);
+          expect(game.board.filter((space) => space.x === 2 && space.y === 2 && space.player === 'P1' && space.king === false)).to.have.length(1);
+          expect(game.board.filter((space) => space.x === 1 && space.y === 1 && space.player === 'P2' && space.king === false)).to.have.length(0);
+          expect(game.board).to.have.length(2);
+          done();
+        });
+      });
+    });
+  });
+  describe('#alternateTurns', () =>{
+    it('should alternate turns between P1 & P2 with default as P1', (done) => {
+      const g = new Game({ player1: '01234567890123456789abce', player2: '01234567890123456789abcf' });
+      g.board = [{ x: 2, y: 2, player: 'P2', king: false }, { x: 3, y: 3, player: 'P1', king: true }, { x: 5, y: 5, player: 'P2', king: false }];
+      expect(g.currentPlayer).to.equal('P1');
+      g.jump({ player: 'P1', orig: { x: 3, y: 3 }, dest: { x: 1, y: 1 } }, (err1, game1) => {
+        expect(game1.currentPlayer).to.equal('P2');
+        game1.move({ player: 'P2', orig: { x: 5, y: 5 }, dest: { x: 6, y: 6 } }, (err2, game2) => {
+          expect(game2.currentPlayer).to.equal('P1');
+          done();
+        });
+      });
+    });
+  });
+  describe('#checkForKings', () => {
+    it('should king appropriate pieces', (done) => {
+      const game = new Game({ player1: '01234567890123456789abce', player2: '01234567890123456789abcf' });
+      game.board = [{ x: 2, y: 2, player: 'P1', king: false }, { x: 7, y: 7, player: 'P2', king: false },{ x: 8, y: 1, player: 'P2', king: false },{ x: 1, y: 8, player: 'P1', king: false }];
+      expect(game.board.filter(piece => piece.king === true)).to.have.length(0);
+      game.move({ player: 'P1', orig: { x: 2, y: 2 }, dest: { x: 1, y: 1 } }, (err1, game1) => {
+        expect(game1.board.filter(piece => piece.king === true)).to.have.length(1);
+        game.move({ player: 'P2', orig: { x: 7, y: 7 }, dest: { x: 8, y: 8 } }, (err2, game2) => {
+          expect(game2.board.filter(piece => piece.king === true)).to.have.length(2);
+          expect(game2.board.filter(piece => piece.king === false)).to.have.length(2);
+          done();
+        });
+      });
+    });
+  });
+  describe('#checkForWin', () => {
+    it('should update when game is won', () => {
+      const game = new Game({ player1: '01234567890123456789abce', player2: '01234567890123456789abcf' });
+      game.board = [{ x: 2, y: 2, player: 'P1', king: false }, { x: 7, y: 7, player: 'P2', king: false },{ x: 8, y: 1, player: 'P2', king: false },{ x: 1, y: 8, player: 'P1', king: false }];
+      expect(game.gameWon).to.be.false;
+      game.checkForWin();
+      expect(game.gameWon).to.be.false;
+      game.board = [{ x: 2, y: 2, player: 'P2', king: false }, { x: 7, y: 7, player: 'P2', king: false },{ x: 8, y: 1, player: 'P2', king: false },{ x: 1, y: 8, player: 'P2', king: false }];
+      expect(game.gameWon).to.be.false;
+      game.checkForWin();
+      expect(game.gameWon).to.be.true;
     });
   });
 });

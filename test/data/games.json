@@ -4,5 +4,11 @@
     "player1" : { "$oid": "01234567890123456789abcd" },
     "player2" : { "$oid": "01234567890123456789abce" },
     "board": [{ x: 1, y: 8, player: 'P1', king: false }, { x: 8, y: 8, player: 'P1', king: false }, { x: 4, y: 4, player: 'P1', king: false }]
+  },
+  {
+    "_id": { "$oid": "01234567890123456789abcc" },
+    "player1" : { "$oid": "01234567890123456789abcd" },
+    "player2" : { "$oid": "01234567890123456789abce" },
+    "board": [{ x: 2, y: 4, player: 'P2', king: false }, { x: 2, y: 2, player: 'P2', king: false }, { x: 3, y: 3, player: 'P1', king: true }]
   }
 ]
