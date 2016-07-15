@@ -1,0 +1,32 @@
+.createPlayerBox{
+  height: 250px
+  width: 350px;
+  border: 1px solid red;
+  padding: 5px;
+  text-align: center;
+}
+
+.checkerBoardBox{
+  border:1px solid green;
+  width: 680px;
+  height: 720px;
+}
+.checkerSquareLight{
+  border: 1px solid black;
+  background-color: aqua;
+  width: 80px;
+  height: 80px;
+  margin: 2px 2px 2px 2px;
+  display: inline-block;
+  box-shadow: 1px 1px 1px;
+}
+
+.checkerSquareDark{
+  border: 1px solid black;
+  background-color: yellow;
+  width: 80px;
+  height: 80px;
+  margin: 2px 2px 2px 2px;
+  display: inline-block;
+  box-shadow: 1px 1px 1px;
+}
